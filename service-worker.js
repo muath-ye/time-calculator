@@ -2,8 +2,6 @@ const CACHE_NAME = 'time-calculator-cache-v1';
 const urlsToCache = [
     './',
     './index.html',
-    './styles.css', // If you have separate CSS file
-    './script.js',  // If you have a separate JS file
     './icons/icon-192x192.png',
     './icons/icon-512x512.png'
 ];
