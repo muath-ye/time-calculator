@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Time Calculator</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .calculator {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .input-group label {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: #5a9;
+        }
+
+        .input-group input:invalid {
+            border-color: #e74c3c;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #5a9;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #48a;
+        }
+
+        .result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .error {
+            color: #e74c3c;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1>Time Calculator</h1>
+        <div class="input-group">
+            <label for="hours1">First Time (Hours:Minutes:Seconds):</label>
+            <input type="number" id="hours1" placeholder="Hours" min="0">
+            <input type="number" id="minutes1" placeholder="Minutes" min="0" max="59">
+            <input type="number" id="seconds1" placeholder="Seconds" min="0" max="59">
+        </div>
+        <div class="input-group">
+            <label for="hours2">Second Time (Hours:Minutes:Seconds):</label>
+            <input type="number" id="hours2" placeholder="Hours" min="0">
+            <input type="number" id="minutes2" placeholder="Minutes" min="0" max="59">
+            <input type="number" id="seconds2" placeholder="Seconds" min="0" max="59">
+        </div>
+        <button onclick="addTime()">Add Time</button>
+        <button onclick="subtractTime()">Subtract Time</button>
+        <div class="error" id="error">Please enter valid time values.</div>
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        function validateInputs() {
+            const hours1 = document.getElementById('hours1').value;
+            const minutes1 = document.getElementById('minutes1').value;
+            const seconds1 = document.getElementById('seconds1').value;
+
+            const hours2 = document.getElementById('hours2').value;
+            const minutes2 = document.getElementById('minutes2').value;
+            const seconds2 = document.getElementById('seconds2').value;
+
+            if (
+                hours1 < 0 || minutes1 < 0 || minutes1 > 59 || seconds1 < 0 || seconds1 > 59 ||
+                hours2 < 0 || minutes2 < 0 || minutes2 > 59 || seconds2 < 0 || seconds2 > 59
+            ) {
+                return false;
+            }
+            return true;
+        }
+
+        function addTime() {
+            if (!validateInputs()) {
+                displayError(true);
+                return;
+            }
+            displayError(false);
+
+            let hours1 = parseInt(document.getElementById('hours1').value) || 0;
+            let minutes1 = parseInt(document.getElementById('minutes1').value) || 0;
+            let seconds1 = parseInt(document.getElementById('seconds1').value) || 0;
+
+            let hours2 = parseInt(document.getElementById('hours2').value) || 0;
+            let minutes2 = parseInt(document.getElementById('minutes2').value) || 0;
+            let seconds2 = parseInt(document.getElementById('seconds2').value) || 0;
+
+            let totalSeconds = seconds1 + seconds2;
+            let totalMinutes = minutes1 + minutes2 + Math.floor(totalSeconds / 60);
+            let totalHours = hours1 + hours2 + Math.floor(totalMinutes / 60);
+
+            totalSeconds = totalSeconds % 60;
+            totalMinutes = totalMinutes % 60;
+
+            displayResult(totalHours, totalMinutes, totalSeconds);
+        }
+
+        function subtractTime() {
+            if (!validateInputs()) {
+                displayError(true);
+                return;
+            }
+            displayError(false);
+
+            let hours1 = parseInt(document.getElementById('hours1').value) || 0;
+            let minutes1 = parseInt(document.getElementById('minutes1').value) || 0;
+            let seconds1 = parseInt(document.getElementById('seconds1').value) || 0;
+
+            let hours2 = parseInt(document.getElementById('hours2').value) || 0;
+            let minutes2 = parseInt(document.getElementById('minutes2').value) || 0;
+            let seconds2 = parseInt(document.getElementById('seconds2').value) || 0;
+
+            let totalSeconds = seconds1 - seconds2;
+            let totalMinutes = minutes1 - minutes2;
+            let totalHours = hours1 - hours2;
+
+            if (totalSeconds < 0) {
+                totalSeconds += 60;
+                totalMinutes--;
+            }
+
+            if (totalMinutes < 0) {
+                totalMinutes += 60;
+                totalHours--;
+            }
+
+            if (totalHours < 0) {
+                totalHours = 0;
+                totalMinutes = 0;
+                totalSeconds = 0;
+            }
+
+            displayResult(totalHours, totalMinutes, totalSeconds);
+        }
+
+        function displayResult(hours, minutes, seconds) {
+            document.getElementById('result').textContent = `Result: ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+        }
+
+        function displayError(show) {
+            const errorElement = document.getElementById('error');
+            if (show) {
+                errorElement.style.display = 'block';
+            } else {
+                errorElement.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
